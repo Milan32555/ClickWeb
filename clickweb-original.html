@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Click Web — Soluciones Digitales que Convierten</title>
+  <meta name="description" content="Click Web: desarrollo web, apps móviles, UI/UX y e-commerce. Transformamos ideas en experiencias digitales que generan resultados.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --night: #050810;
+      --deep: #0a0f1e;
+      --surface: #0e1628;
+      --card: #111827;
+      --border: rgba(99,179,237,0.12);
+      --accent: #3b82f6;
+      --accent-light: #60a5fa;
+      --accent-glow: rgba(59,130,246,0.35);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6,182,212,0.3);
+      --white: #f0f4ff;
+      --muted: #8898b8;
+      --text: #c8d6f0;
+      --green: #22c55e;
+      --wa: #25D366;
+      --wa-dark: #128C7E;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--night);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ─── COOKIE BANNER ─── */
+    #cookie-banner {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      background: rgba(10,15,30,0.97);
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      backdrop-filter: blur(14px);
+      transform: translateY(0); transition: transform .4s ease;
+    }
+    #cookie-banner.hidden { transform: translateY(110%); }
+    #cookie-banner p { font-size: .85rem; color: var(--muted); max-width: 70ch; }
+    #cookie-banner a { color: var(--accent-light); text-decoration: underline; }
+    .cookie-btns { display:flex; gap:.75rem; flex-shrink:0; }
+    .btn-cookie-accept {
+      background: var(--accent); color: #fff; border: none;
+      padding: .55rem 1.4rem; border-radius: 6px; font-size: .85rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500;
+      transition: background .2s;
+    }
+    .btn-cookie-accept:hover { background: var(--accent-light); }
+    .btn-cookie-reject {
+      background: transparent; color: var(--muted); border: 1px solid var(--border);
+      padding: .55rem 1.4rem; border-radius: 6px; font-size: .85rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: color .2s;
+    }
+    .btn-cookie-reject:hover { color: var(--white); }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 5%;
+      background: rgba(5,8,16,0.7);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      transition: background .3s;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem;
+      color: var(--white); text-decoration: none; letter-spacing: -.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 400;
+      transition: color .2s; letter-spacing: .01em;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--accent); color: #fff; text-decoration: none;
+      padding: .6rem 1.4rem; border-radius: 8px; font-size: .88rem; font-weight: 500;
+      transition: background .2s, box-shadow .2s;
+      box-shadow: 0 0 18px var(--accent-glow);
+    }
+    .nav-cta:hover { background: var(--accent-light); box-shadow: 0 0 28px var(--accent-glow); }
+    .nav-burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-burger span { width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: .3s; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: 7rem 5% 4rem;
+      text-align: center;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.2) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 85% 70%, rgba(6,182,212,0.12) 0%, transparent 60%),
+                  var(--night);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 860px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25);
+      padding: .4rem 1.1rem; border-radius: 50px; font-size: .82rem;
+      color: var(--accent-light); font-weight: 500; margin-bottom: 1.75rem;
+      letter-spacing: .04em; text-transform: uppercase;
+      animation: fadeDown .7s ease both;
+    }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+    h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 800; line-height: 1.08; letter-spacing: -.03em;
+      color: var(--white); margin-bottom: 1.4rem;
+      animation: fadeUp .8s .1s ease both;
+    }
+    h1 .grad {
+      background: linear-gradient(135deg, var(--accent-light) 0%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted); max-width: 560px;
+      margin: 0 auto 2.4rem; font-weight: 300; line-height: 1.65;
+      animation: fadeUp .8s .2s ease both;
+    }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeUp .8s .3s ease both; }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: .65rem;
+      background: var(--wa); color: #fff; text-decoration: none;
+      padding: .9rem 2rem; border-radius: 10px; font-size: 1rem; font-weight: 600;
+      box-shadow: 0 0 30px rgba(37,211,102,0.35);
+      transition: transform .2s, box-shadow .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(37,211,102,0.5); }
+    .btn-wa svg { flex-shrink: 0; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: transparent; color: var(--text); text-decoration: none;
+      padding: .9rem 2rem; border-radius: 10px; font-size: 1rem; font-weight: 500;
+      border: 1px solid var(--border);
+      transition: border-color .2s, color .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--white); }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 3rem; margin-top: 3.5rem; flex-wrap: wrap;
+      animation: fadeUp .8s .4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--white); }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: .8rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+
+    /* ─── SECTIONS SHARED ─── */
+    section { padding: 6rem 5%; }
+    .section-tag {
+      display: inline-block; font-size: .75rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent); background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.2); padding: .35rem .9rem; border-radius: 50px;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; color: var(--white); line-height: 1.15; letter-spacing: -.025em;
+      margin-bottom: .75rem;
+    }
+    .section-sub { color: var(--muted); max-width: 520px; font-size: 1rem; line-height: 1.7; font-weight: 300; }
+    .section-head { margin-bottom: 3.5rem; }
+
+    /* ─── SERVICES ─── */
+    #servicios { background: var(--deep); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .service-card {
+      background: var(--card); padding: 2.5rem 2rem;
+      transition: background .3s; position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      transform: scaleX(0); transform-origin: left; transition: transform .35s ease;
+    }
+    .service-card:hover { background: #141e33; }
+    .service-card:hover::before { transform: scaleX(1); }
+    .svc-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem; font-size: 1.4rem;
+    }
+    .svc-icon.blue { background: rgba(59,130,246,0.12); }
+    .svc-icon.cyan { background: rgba(6,182,212,0.12); }
+    .svc-icon.purple { background: rgba(139,92,246,0.12); }
+    .svc-icon.green { background: rgba(34,197,94,0.12); }
+    .svc-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--white); margin-bottom: .6rem; }
+    .svc-desc { font-size: .9rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
+    .svc-tags { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.25rem; }
+    .svc-tag { font-size: .73rem; color: var(--accent-light); background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); padding: .2rem .65rem; border-radius: 50px; }
+
+    /* ─── WHY US ─── */
+    #por-que { background: var(--night); }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .why-visual {
+      position: relative; border-radius: 20px; overflow: hidden;
+      background: linear-gradient(135deg, var(--surface), var(--card));
+      border: 1px solid var(--border); padding: 2.5rem;
+      display: flex; flex-direction: column; gap: 1.2rem;
+    }
+    .why-metric {
+      display: flex; align-items: center; gap: 1.2rem;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.25rem;
+    }
+    .why-metric-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .why-metric-num { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--white); }
+    .why-metric-label { font-size: .8rem; color: var(--muted); }
+    .benefits { display: flex; flex-direction: column; gap: 1.5rem; }
+    .benefit { display: flex; gap: 1.1rem; align-items: flex-start; }
+    .benefit-check {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: rgba(34,197,94,0.12); display: flex; align-items: center; justify-content: center;
+      color: var(--green); font-size: .85rem; margin-top: 2px;
+    }
+    .benefit-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--white); font-size: 1rem; margin-bottom: .25rem; }
+    .benefit-desc { font-size: .88rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+    /* ─── PORTFOLIO ─── */
+    #portafolio { background: var(--deep); }
+    .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .portfolio-card {
+      border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
+      background: var(--card); transition: transform .3s, box-shadow .3s; cursor: pointer;
+    }
+    .portfolio-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+    .portfolio-thumb {
+      height: 200px; display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; position: relative; overflow: hidden;
+    }
+    .portfolio-thumb-1 { background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+    .portfolio-thumb-2 { background: linear-gradient(135deg, #0f1f0f, #1a4a2e); }
+    .portfolio-thumb-3 { background: linear-gradient(135deg, #1a0f2e, #3b1f6a); }
+    .portfolio-overlay {
+      position: absolute; inset: 0; background: rgba(59,130,246,0.08);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .3s;
+    }
+    .portfolio-card:hover .portfolio-overlay { opacity: 1; }
+    .portfolio-info { padding: 1.5rem; }
+    .portfolio-cat { font-size: .75rem; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; font-weight: 500; margin-bottom: .4rem; }
+    .portfolio-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: .4rem; }
+    .portfolio-desc { font-size: .85rem; color: var(--muted); font-weight: 300; }
+    .portfolio-mock-label { font-family: 'Syne', sans-serif; font-size: .7rem; font-weight: 600; color: var(--muted); background: rgba(255,255,255,0.05); padding: .25rem .65rem; border-radius: 4px; position: absolute; bottom: .75rem; right: .75rem; }
+
+    /* ─── PROCESS ─── */
+    #proceso { background: var(--night); }
+    .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; position: relative; }
+    .process-steps::before {
+      content: ''; position: absolute; top: 36px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+      z-index: 0;
+    }
+    .step { text-align: center; padding: 2rem 1.5rem; position: relative; z-index: 1; }
+    .step-num {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800;
+      border: 1px solid var(--border); background: var(--deep);
+      position: relative; transition: transform .3s;
+    }
+    .step:hover .step-num { transform: scale(1.08); }
+    .step-num.s1 { color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); border-color: var(--accent); }
+    .step-num.s2 { color: var(--cyan); box-shadow: 0 0 20px var(--cyan-glow); border-color: var(--cyan); }
+    .step-num.s3 { color: #a78bfa; box-shadow: 0 0 20px rgba(167,139,250,.3); border-color: #a78bfa; }
+    .step-num.s4 { color: var(--green); box-shadow: 0 0 20px rgba(34,197,94,.3); border-color: var(--green); }
+    .step-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--white); font-size: 1.05rem; margin-bottom: .5rem; }
+    .step-desc { font-size: .87rem; color: var(--muted); font-weight: 300; line-height: 1.6; }
+
+    /* ─── CONTACT / CTA ─── */
+    #contacto {
+      background: var(--deep);
+      position: relative; overflow: hidden;
+    }
+    .contact-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(37,211,102,0.07) 0%, transparent 70%);
+    }
+    .contact-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; text-align: center; }
+    .contact-inner .section-title { font-size: clamp(2rem, 4.5vw, 3.2rem); }
+    .contact-inner .section-sub { margin: 0 auto 1rem; }
+    .urgency-bar {
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.2);
+      padding: .5rem 1.2rem; border-radius: 50px; margin: 1.5rem 0 2rem;
+      font-size: .84rem; color: #4ade80; font-weight: 500;
+    }
+    .urgency-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
+    .btn-wa-big {
+      display: inline-flex; align-items: center; justify-content: center; gap: .9rem;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: #fff; text-decoration: none;
+      padding: 1.15rem 2.8rem; border-radius: 14px; font-size: 1.15rem; font-weight: 700;
+      box-shadow: 0 0 45px rgba(37,211,102,0.4), 0 4px 20px rgba(0,0,0,.4);
+      transition: transform .2s, box-shadow .2s; letter-spacing: -.01em;
+      font-family: 'Syne', sans-serif;
+    }
+    .btn-wa-big:hover { transform: translateY(-3px); box-shadow: 0 0 60px rgba(37,211,102,0.55), 0 8px 30px rgba(0,0,0,.4); }
+    .contact-trust { display: flex; justify-content: center; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+    .trust-item { display: flex; align-items: center; gap: .5rem; font-size: .84rem; color: var(--muted); }
+    .trust-item span:first-child { font-size: 1rem; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #030509; border-top: 1px solid var(--border);
+      padding: 3.5rem 5% 2rem;
+    }
+    .footer-main { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; margin-bottom: 2.5rem; }
+    .footer-brand .nav-logo { font-size: 1.5rem; display: block; margin-bottom: .75rem; }
+    .footer-tagline { font-size: .88rem; color: var(--muted); font-weight: 300; max-width: 280px; line-height: 1.6; }
+    .footer-links { display: flex; gap: 3rem; flex-wrap: wrap; }
+    .footer-col h4 { font-family: 'Syne', sans-serif; font-size: .85rem; font-weight: 700; color: var(--white); margin-bottom: 1rem; letter-spacing: .04em; text-transform: uppercase; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .footer-col ul a { font-size: .88rem; color: var(--muted); text-decoration: none; transition: color .2s; font-weight: 300; }
+    .footer-col ul a:hover { color: var(--white); }
+    .socials { display: flex; gap: .75rem; }
+    .social-link {
+      width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); text-decoration: none; font-size: .9rem;
+      transition: border-color .2s, color .2s;
+    }
+    .social-link:hover { border-color: var(--accent); color: var(--accent-light); }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 1.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; }
+    .footer-copy { font-size: .8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 1.5rem; }
+    .footer-legal a { font-size: .8rem; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-legal a:hover { color: var(--white); }
+
+    /* ─── MODALS ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,.8); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      max-width: 680px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2.5rem;
+      position: relative;
+    }
+    .modal h2 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--white); margin-bottom: 1rem; }
+    .modal h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent-light); margin: 1.5rem 0 .5rem; }
+    .modal p, .modal li { font-size: .88rem; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: .5rem; }
+    .modal ul { padding-left: 1.25rem; }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1.25rem;
+      background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer;
+      transition: color .2s; line-height: 1;
+    }
+    .modal-close:hover { color: var(--white); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--night); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 860px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-burger { display: flex; }
+      .why-grid { grid-template-columns: 1fr; }
+      .why-visual { display: none; }
+      .process-steps::before { display: none; }
+      .footer-main { flex-direction: column; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 4rem 4%; }
+      .hero-stats { gap: 1.5rem; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-nav {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99;
+      background: rgba(5,8,16,.97); backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+      transform: translateX(100%); transition: transform .35s ease;
+    }
+    .mobile-nav.open { transform: translateX(0); }
+    .mobile-nav a { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; }
+    .mobile-nav a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- COOKIE BANNER -->
+<div id="cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies">
+  <p>Utilizamos cookies propias para mejorar su experiencia de navegación. Al hacer clic en "Aceptar" consiente su uso. Puede obtener más información en nuestra <a href="#" onclick="openModal('modal-cookies');return false;">Política de Cookies</a> y <a href="#" onclick="openModal('modal-privacidad');return false;">Política de Privacidad</a>.</p>
+  <div class="cookie-btns">
+    <button class="btn-cookie-reject" onclick="rejectCookies()">Rechazar</button>
+    <button class="btn-cookie-accept" onclick="acceptCookies()">Aceptar todas</button>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#servicios" onclick="closeMobileNav()">Servicios</a>
+  <a href="#por-que" onclick="closeMobileNav()">Por qué nosotros</a>
+  <a href="#portafolio" onclick="closeMobileNav()">Portafolio</a>
+  <a href="#proceso" onclick="closeMobileNav()">Proceso</a>
+  <a href="https://wa.me/573001234567?text=Hola%2C%20me%20interesa%20conocer%20sus%20servicios%20digitales" target="_blank" rel="noopener noreferrer">Contáctanos ↗</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Click<span>Web</span></a>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#por-que">Por qué nosotros</a></li>
+    <li><a href="#portafolio">Portafolio</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+  </ul>
+  <a href="https://wa.me/573001234567?text=Hola%2C%20me%20interesa%20conocer%20sus%20servicios%20digitales" target="_blank" rel="noopener noreferrer" class="nav-cta">Hablar con experto</a>
+  <div class="nav-burger" id="burger" onclick="toggleMobileNav()" aria-label="Menú" role="button" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Agencia Digital Premium</div>
+    <h1>Transformamos ideas en<br><span class="grad">experiencias digitales</span><br>que convierten</h1>
+    <p class="hero-sub">Creamos webs, apps y e-commerce de alto rendimiento diseñados para atraer más clientes y escalar tu negocio sin límites.</p>
+    <div class="hero-btns">
+      <a href="https://wa.me/573001234567?text=Hola%20Click%20Web%2C%20me%20gustar%C3%ADa%20hablar%20sobre%20mi%20proyecto%20digital.%20%C2%BFPodemos%20agendar%20una%20llamada%3F" target="_blank" rel="noopener noreferrer" class="btn-wa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.478 2 2 6.478 2 12c0 1.85.504 3.58 1.38 5.07L2 22l5.13-1.347A9.953 9.953 0 0012 22c5.522 0 10-4.478 10-10S17.522 2 12 2zm0 18.153a8.128 8.128 0 01-4.146-1.134l-.298-.177-3.046.798.814-2.974-.194-.306A8.113 8.113 0 013.847 12c0-4.497 3.657-8.153 8.152-8.153 4.496 0 8.153 3.656 8.153 8.153 0 4.496-3.657 8.153-8.153 8.153z"/></svg>
+        Contáctanos por WhatsApp
+      </a>
+      <a href="#servicios" class="btn-secondary">Ver servicios →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">+80<span>%</span></div><div class="stat-label">Más conversiones</div></div>
+      <div class="stat"><div class="stat-num">48<span>h</span></div><div class="stat-label">Entrega inicial</div></div>
+      <div class="stat"><div class="stat-num">100<span>%</span></div><div class="stat-label">Satisfacción garantizada</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios">
+  <div class="section-head reveal">
+    <span class="section-tag">Lo que hacemos</span>
+    <h2 class="section-title">Soluciones digitales<br>a medida de tu negocio</h2>
+    <p class="section-sub">Desde la idea hasta el lanzamiento, construimos productos digitales que destacan y generan resultados reales.</p>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="svc-icon blue">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="svc-title">Desarrollo Web</div>
+      <p class="svc-desc">Páginas web rápidas, elegantes y optimizadas para SEO. Diseñadas para convertir visitantes en clientes desde el primer clic.</p>
+      <div class="svc-tags"><span class="svc-tag">Landing Pages</span><span class="svc-tag">Corporativas</span><span class="svc-tag">SEO</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-icon cyan">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+      </div>
+      <div class="svc-title">Apps Móviles</div>
+      <p class="svc-desc">Aplicaciones iOS y Android con experiencias de usuario excepcionales. Tu negocio en el bolsillo de tus clientes, disponible 24/7.</p>
+      <div class="svc-tags"><span class="svc-tag">iOS</span><span class="svc-tag">Android</span><span class="svc-tag">React Native</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-icon purple">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <div class="svc-title">Diseño UI/UX</div>
+      <p class="svc-desc">Interfaces que enamoran. Optimizamos cada flujo y cada pantalla para que tus usuarios disfruten y conviertan con facilidad.</p>
+      <div class="svc-tags"><span class="svc-tag">Figma</span><span class="svc-tag">Prototipos</span><span class="svc-tag">Usabilidad</span></div>
+    </div>
+    <div class="service-card">
+      <div class="svc-icon green">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      </div>
+      <div class="svc-title">E-commerce</div>
+      <p class="svc-desc">Tiendas online que venden. Integramos pasarelas de pago, gestión de inventario y estrategias de conversión que multiplican tus ventas.</p>
+      <div class="svc-tags"><span class="svc-tag">WooCommerce</span><span class="svc-tag">Shopify</span><span class="svc-tag">Custom</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUÉ ELEGIRNOS -->
+<section id="por-que">
+  <div class="why-grid">
+    <div class="reveal">
+      <span class="section-tag">Por qué elegirnos</span>
+      <h2 class="section-title">No solo construimos webs,<br>construimos <span style="color:var(--accent)">resultados</span></h2>
+      <p class="section-sub" style="margin-bottom:2.5rem">Cada proyecto es una oportunidad para superar expectativas. Trabajamos como socios estratégicos, no como proveedores.</p>
+      <div class="benefits">
+        <div class="benefit">
+          <div class="benefit-check">✓</div>
+          <div><div class="benefit-title">Entrega ultrarrápida</div><div class="benefit-desc">Primeras versiones en 48h. Sprints ágiles que respetan tus plazos y adaptan el proyecto a tu ritmo de negocio.</div></div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-check">✓</div>
+          <div><div class="benefit-title">Diseño premium sin compromiso</div><div class="benefit-desc">Cada pixel tiene un propósito. Diseños modernos, accesibles y alineados con tu identidad de marca.</div></div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-check">✓</div>
+          <div><div class="benefit-title">Optimizado para convertir</div><div class="benefit-desc">SEO técnico, velocidad de carga y UX orientada a métricas reales: más tráfico, más leads, más ventas.</div></div>
+        </div>
+        <div class="benefit">
+          <div class="benefit-check">✓</div>
+          <div><div class="benefit-title">Soporte continuo post-lanzamiento</div><div class="benefit-desc">No te dejamos solo. Mantenimiento, actualizaciones y soporte directo por WhatsApp cuando lo necesites.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual reveal">
+      <div class="why-metric">
+        <div class="why-metric-icon">🚀</div>
+        <div><div class="why-metric-num">3x</div><div class="why-metric-label">más velocidad de carga vs. promedio</div></div>
+      </div>
+      <div class="why-metric">
+        <div class="why-metric-icon">📈</div>
+        <div><div class="why-metric-num">+82%</div><div class="why-metric-label">aumento promedio en conversiones</div></div>
+      </div>
+      <div class="why-metric">
+        <div class="why-metric-icon">⭐</div>
+        <div><div class="why-metric-num">4.9/5</div><div class="why-metric-label">valoración media de clientes</div></div>
+      </div>
+      <div class="why-metric">
+        <div class="why-metric-icon">🔄</div>
+        <div><div class="why-metric-num">95%</div><div class="why-metric-label">clientes repiten o nos recomiendan</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTAFOLIO -->
+<section id="portafolio">
+  <div class="section-head reveal">
+    <span class="section-tag">Proyectos</span>
+    <h2 class="section-title">Trabajo que habla<br>por sí solo</h2>
+    <p class="section-sub">Una selección de proyectos donde convertimos retos en soluciones digitales con impacto medible.</p>
+  </div>
+  <div class="portfolio-grid reveal">
+    <div class="portfolio-card">
+      <div class="portfolio-thumb portfolio-thumb-1">
+        <span>🏢</span>
+        <div class="portfolio-overlay"><span style="color:#fff;font-size:.85rem;font-family:'Syne',sans-serif;font-weight:700">Ver proyecto →</span></div>
+        <span class="portfolio-mock-label">EJEMPLO</span>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">Web Corporativa</div>
+        <div class="portfolio-name">ConsultTech Pro</div>
+        <p class="portfolio-desc">Rediseño completo con +120% en tiempo en página y 3x más consultas entrantes.</p>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb portfolio-thumb-2">
+        <span>🛒</span>
+        <div class="portfolio-overlay"><span style="color:#fff;font-size:.85rem;font-family:'Syne',sans-serif;font-weight:700">Ver proyecto →</span></div>
+        <span class="portfolio-mock-label">EJEMPLO</span>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">E-commerce</div>
+        <div class="portfolio-name">Natura Store</div>
+        <p class="portfolio-desc">Tienda online con integración de pagos y gestión de inventario. +200% en ventas digitales en 3 meses.</p>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb portfolio-thumb-3">
+        <span>📱</span>
+        <div class="portfolio-overlay"><span style="color:#fff;font-size:.85rem;font-family:'Syne',sans-serif;font-weight:700">Ver proyecto →</span></div>
+        <span class="portfolio-mock-label">EJEMPLO</span>
+      </div>
+      <div class="portfolio-info">
+        <div class="portfolio-cat">App Móvil</div>
+        <div class="portfolio-name">FitTrack App</div>
+        <p class="portfolio-desc">App de bienestar con 15.000 descargas en el primer mes y valoración 4.8 en stores.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section id="proceso">
+  <div class="section-head reveal" style="text-align:center;max-width:560px;margin:0 auto 3.5rem">
+    <span class="section-tag">Cómo trabajamos</span>
+    <h2 class="section-title">De la idea al lanzamiento,<br>sin complicaciones</h2>
+    <p class="section-sub" style="margin:0 auto">Un proceso claro, transparente y orientado a resultados que te mantiene informado en cada paso.</p>
+  </div>
+  <div class="process-steps reveal">
+    <div class="step">
+      <div class="step-num s1">01</div>
+      <div class="step-title">Descubrimiento</div>
+      <p class="step-desc">Escuchamos tu idea, objetivos y audiencia. Definimos el alcance y la estrategia digital óptima para tu negocio.</p>
+    </div>
+    <div class="step">
+      <div class="step-num s2">02</div>
+      <div class="step-title">Diseño</div>
+      <p class="step-desc">Creamos wireframes y prototipos visuales. Tú apruebas cada pantalla antes de escribir una sola línea de código.</p>
+    </div>
+    <div class="step">
+      <div class="step-num s3">03</div>
+      <div class="step-title">Desarrollo</div>
+      <p class="step-desc">Construimos con tecnología moderna, código limpio y pruebas exhaustivas. Entregas parciales para que veas el avance en tiempo real.</p>
+    </div>
+    <div class="step">
+      <div class="step-num s4">04</div>
+      <div class="step-title">Lanzamiento</div>
+      <p class="step-desc">Publicamos, optimizamos y te capacitamos. Seguimiento post-lanzamiento para asegurar que todo funcione a la perfección.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="contact-bg"></div>
+  <div class="contact-inner">
+    <div class="reveal">
+      <span class="section-tag">Contáctanos</span>
+      <h2 class="section-title">¿Listo para llevar tu negocio al siguiente nivel?</h2>
+      <p class="section-sub">Miles de empresas ya confían en nosotros. Únete y descubre cómo una presencia digital estratégica transforma tu facturación.</p>
+      <div class="urgency-bar">
+        <span class="urgency-dot"></span>
+        Respondemos en menos de 2 horas · Consulta gratuita sin compromiso
+      </div>
+      <a href="https://wa.me/573001234567?text=Hola%20Click%20Web%20%F0%9F%91%8B%20Quiero%20una%20consulta%20gratuita%20para%20mi%20proyecto%20digital.%20%C2%BFTienen%20disponibilidad%20hoy%3F" target="_blank" rel="noopener noreferrer" class="btn-wa-big">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.478 2 2 6.478 2 12c0 1.85.504 3.58 1.38 5.07L2 22l5.13-1.347A9.953 9.953 0 0012 22c5.522 0 10-4.478 10-10S17.522 2 12 2zm0 18.153a8.128 8.128 0 01-4.146-1.134l-.298-.177-3.046.798.814-2.974-.194-.306A8.113 8.113 0 013.847 12c0-4.497 3.657-8.153 8.152-8.153 4.496 0 8.153 3.656 8.153 8.153 0 4.496-3.657 8.153-8.153 8.153z"/></svg>
+        Habla con un experto ahora
+      </a>
+      <div class="contact-trust">
+        <div class="trust-item"><span>🔒</span><span>Consulta confidencial y sin costo</span></div>
+        <div class="trust-item"><span>⚡</span><span>Presupuesto en 24h</span></div>
+        <div class="trust-item"><span>✅</span><span>Sin permanencia ni compromisos</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">Click<span>Web</span></a>
+      <p class="footer-tagline">Transformamos ideas en experiencias digitales que convierten visitantes en clientes.</p>
+      <div class="socials" style="margin-top:1.25rem">
+        <a href="#" class="social-link" aria-label="Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="Facebook">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://wa.me/573001234567" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="WhatsApp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.478 2 2 6.478 2 12c0 1.85.504 3.58 1.38 5.07L2 22l5.13-1.347A9.953 9.953 0 0012 22c5.522 0 10-4.478 10-10S17.522 2 12 2zm0 18.153a8.128 8.128 0 01-4.146-1.134l-.298-.177-3.046.798.814-2.974-.194-.306A8.113 8.113 0 013.847 12c0-4.497 3.657-8.153 8.152-8.153 4.496 0 8.153 3.656 8.153 8.153 0 4.496-3.657 8.153-8.153 8.153z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Servicios</h4>
+        <ul>
+          <li><a href="#servicios">Desarrollo Web</a></li>
+          <li><a href="#servicios">Apps Móviles</a></li>
+          <li><a href="#servicios">Diseño UI/UX</a></li>
+          <li><a href="#servicios">E-commerce</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#por-que">Sobre nosotros</a></li>
+          <li><a href="#portafolio">Portafolio</a></li>
+          <li><a href="#proceso">Cómo trabajamos</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#" onclick="openModal('modal-aviso');return false;">Aviso Legal</a></li>
+          <li><a href="#" onclick="openModal('modal-privacidad');return false;">Política de Privacidad</a></li>
+          <li><a href="#" onclick="openModal('modal-cookies');return false;">Política de Cookies</a></li>
+          <li><a href="#" onclick="openModal('modal-rgpd');return false;">RGPD / LOPDGDD</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Click Web. Todos los derechos reservados.</p>
+    <div class="footer-legal">
+      <a href="#" onclick="openModal('modal-aviso');return false;">Aviso Legal</a>
+      <a href="#" onclick="openModal('modal-privacidad');return false;">Privacidad</a>
+      <a href="#" onclick="openModal('modal-cookies');return false;">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── MODALS LEGALES ─── -->
+
+<!-- AVISO LEGAL -->
+<div class="modal-overlay" id="modal-aviso">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aviso-title">
+    <button class="modal-close" onclick="closeModal('modal-aviso')" aria-label="Cerrar">×</button>
+    <h2 id="aviso-title">Aviso Legal</h2>
+    <h3>1. Identificación del Responsable</h3>
+    <p><strong>Razón Social:</strong> Click Web S.A.S.<br>
+    <strong>CIF/NIT:</strong> [Número de identificación tributaria]<br>
+    <strong>Domicilio social:</strong> [Dirección completa]<br>
+    <strong>Correo electrónico:</strong> legal@clickweb.co<br>
+    <strong>Teléfono:</strong> +57 300 123 4567</p>
+    <h3>2. Objeto y Ámbito de Aplicación</h3>
+    <p>El presente Aviso Legal regula el acceso y uso del sitio web <strong>clickweb.co</strong> (en adelante, "el Sitio Web"), titularidad de Click Web S.A.S., con domicilio en Colombia. El acceso al Sitio Web implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este Aviso Legal.</p>
+    <h3>3. Condiciones de Uso</h3>
+    <p>El usuario se compromete a hacer un uso adecuado del Sitio Web y a no emplearlo para actividades ilícitas, contrarias a la buena fe o al orden público. Click Web S.A.S. se reserva el derecho a denegar o retirar el acceso al Sitio Web a cualquier usuario que incumpla estas condiciones.</p>
+    <h3>4. Propiedad Intelectual e Industrial</h3>
+    <p>Todos los contenidos del Sitio Web (textos, fotografías, gráficos, imágenes, iconos, tecnología, software, marcas, etc.) son titularidad de Click Web S.A.S. o de terceros que han autorizado su uso. Queda expresamente prohibida su reproducción, distribución, comunicación pública o transformación sin autorización previa y por escrito.</p>
+    <h3>5. Exclusión de Responsabilidad</h3>
+    <p>Click Web S.A.S. no se responsabiliza de los daños o perjuicios de cualquier naturaleza que puedan derivarse del acceso o uso del Sitio Web, incluyendo los causados por virus informáticos o los producidos por el mal uso de los contenidos.</p>
+    <h3>6. Legislación Aplicable y Jurisdicción</h3>
+    <p>Este Aviso Legal se rige por la legislación colombiana vigente. Para cualquier controversia serán competentes los Juzgados y Tribunales de la ciudad de Bogotá, Colombia.</p>
+  </div>
+</div>
+
+<!-- POLÍTICA DE PRIVACIDAD -->
+<div class="modal-overlay" id="modal-privacidad">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="privacidad-title">
+    <button class="modal-close" onclick="closeModal('modal-privacidad')" aria-label="Cerrar">×</button>
+    <h2 id="privacidad-title">Política de Privacidad</h2>
+    <h3>1. Responsable del Tratamiento</h3>
+    <p>Click Web S.A.S., con domicilio en Colombia, es el responsable del tratamiento de los datos personales recabados a través de este Sitio Web, de conformidad con el Reglamento (UE) 2016/679 (RGPD), la Ley Orgánica 3/2018 (LOPDGDD) para usuarios en España/UE, y la Ley 1581 de 2012 de Protección de Datos Personales de Colombia.</p>
+    <h3>2. Datos Personales Recabados</h3>
+    <ul>
+      <li>Datos de contacto: nombre, número de teléfono (WhatsApp), correo electrónico.</li>
+      <li>Datos de navegación: dirección IP, tipo de navegador, páginas visitadas (ver Política de Cookies).</li>
+    </ul>
+    <h3>3. Finalidad y Base Legitimadora</h3>
+    <p>Los datos se tratan para: (a) gestionar las consultas comerciales y dar respuesta a través de WhatsApp o email —base legal: ejecución de un contrato o medidas precontractuales—; (b) enviar comunicaciones comerciales con su consentimiento previo (base legal: consentimiento del interesado).</p>
+    <h3>4. Conservación de los Datos</h3>
+    <p>Los datos se conservarán durante el tiempo necesario para la prestación del servicio y, en su caso, durante los plazos legales aplicables. Los datos de comunicaciones comerciales se conservarán hasta que el interesado retire su consentimiento.</p>
+    <h3>5. Comunicación a Terceros</h3>
+    <p>No se cederán datos a terceros salvo obligación legal o encargos de tratamiento necesarios para la prestación del servicio (p. ej. proveedores de hosting o herramientas de analítica bajo acuerdo de confidencialidad).</p>
+    <h3>6. Derechos del Interesado</h3>
+    <p>Puede ejercer sus derechos de acceso, rectificación, supresión, portabilidad, limitación y oposición enviando un correo a <strong>privacidad@clickweb.co</strong> con su solicitud y documento de identidad. Tiene derecho a presentar una reclamación ante la autoridad de control competente (en Colombia: Superintendencia de Industria y Comercio; en la UE: la AEPD u homóloga).</p>
+    <h3>7. Seguridad</h3>
+    <p>Click Web adopta las medidas técnicas y organizativas necesarias para garantizar la seguridad de los datos personales y evitar su alteración, pérdida o acceso no autorizado.</p>
+  </div>
+</div>
+
+<!-- POLÍTICA DE COOKIES -->
+<div class="modal-overlay" id="modal-cookies">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cookies-title">
+    <button class="modal-close" onclick="closeModal('modal-cookies')" aria-label="Cerrar">×</button>
+    <h2 id="cookies-title">Política de Cookies</h2>
+    <h3>¿Qué son las cookies?</h3>
+    <p>Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita un sitio web. Permiten recordar sus preferencias y mejorar la experiencia de navegación.</p>
+    <h3>Tipos de Cookies que utilizamos</h3>
+    <ul>
+      <li><strong>Cookies técnicas (necesarias):</strong> Imprescindibles para el funcionamiento del Sitio Web. No requieren consentimiento.</li>
+      <li><strong>Cookies analíticas:</strong> Nos permiten analizar el uso del Sitio Web de forma anonimizada para mejorarlo (p. ej. Google Analytics). Requieren su consentimiento.</li>
+      <li><strong>Cookies de preferencias:</strong> Recuerdan sus opciones y configuraciones para personalizar su experiencia. Requieren su consentimiento.</li>
+    </ul>
+    <h3>¿Cómo gestionar las cookies?</h3>
+    <p>Puede aceptar, rechazar o gestionar las cookies a través del banner de cookies que aparece al acceder al Sitio Web. Asimismo, puede configurar su navegador para bloquear o eliminar cookies. Tenga en cuenta que deshabilitar ciertas cookies puede afectar la funcionalidad del Sitio Web.</p>
+    <h3>Base legal</h3>
+    <p>El uso de cookies analíticas y de preferencias se basa en su consentimiento, de conformidad con el RGPD y la normativa colombiana vigente. Puede retirar su consentimiento en cualquier momento.</p>
+    <h3>Más información</h3>
+    <p>Para más información sobre el tratamiento de sus datos, consulte nuestra <a href="#" onclick="closeModal('modal-cookies');openModal('modal-privacidad');" style="color:var(--accent-light)">Política de Privacidad</a>.</p>
+  </div>
+</div>
+
+<!-- RGPD / LOPDGDD -->
+<div class="modal-overlay" id="modal-rgpd">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rgpd-title">
+    <button class="modal-close" onclick="closeModal('modal-rgpd')" aria-label="Cerrar">×</button>
+    <h2 id="rgpd-title">Cumplimiento RGPD / LOPDGDD</h2>
+    <h3>Reglamento General de Protección de Datos (RGPD)</h3>
+    <p>Click Web S.A.S. trata los datos personales de usuarios de la Unión Europea conforme al Reglamento (UE) 2016/679. Garantizamos el cumplimiento de los principios de licitud, lealtad, transparencia, limitación de la finalidad, minimización de datos, exactitud, limitación del plazo de conservación e integridad y confidencialidad.</p>
+    <h3>Ley Orgánica 3/2018 (LOPDGDD) — España</h3>
+    <p>Para usuarios residentes en España, complementamos el RGPD con las disposiciones de la LOPDGDD, incluyendo el derecho al olvido digital, el derecho a la portabilidad y el derecho de acceso reforzado. Los interesados pueden ejercer sus derechos dirigiéndose a <strong>privacidad@clickweb.co</strong>.</p>
+    <h3>Ley 1581 de 2012 — Colombia</h3>
+    <p>En cumplimiento de la Ley Estatutaria 1581 de 2012 y el Decreto 1377 de 2013, Click Web S.A.S. solicita autorización previa, expresa e informada para el tratamiento de datos personales. Los titulares tienen derecho a conocer, actualizar, rectificar y suprimir sus datos, así como a revocar la autorización otorgada.</p>
+    <h3>Transferencias Internacionales de Datos</h3>
+    <p>En caso de transferir datos fuera de Colombia o del Espacio Económico Europeo, Click Web garantizará que el país destinatario ofrece un nivel adecuado de protección o que se han implementado garantías apropiadas (cláusulas contractuales tipo, etc.).</p>
+    <h3>Libro de Reclamaciones (normativa local)</h3>
+    <p>En cumplimiento de normativas locales aplicables, el usuario puede presentar reclamaciones a través del correo <strong>reclamaciones@clickweb.co</strong>. Nos comprometemos a responder en un plazo máximo de 15 días hábiles.</p>
+  </div>
+</div>
+
+<script>
+  // ─── COOKIE BANNER ───
+  function acceptCookies() {
+    localStorage.setItem('cw_cookie_consent', 'accepted');
+    document.getElementById('cookie-banner').classList.add('hidden');
+  }
+  function rejectCookies() {
+    localStorage.setItem('cw_cookie_consent', 'rejected');
+    document.getElementById('cookie-banner').classList.add('hidden');
+  }
+  (function() {
+    if (localStorage.getItem('cw_cookie_consent')) {
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+  })();
+
+  // ─── MODALS ───
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(m => {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+
+  // ─── MOBILE NAV ───
+  function toggleMobileNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
+  }
+  function closeMobileNav() {
+    document.getElementById('mobileNav').classList.remove('open');
+  }
+
+  // ─── SCROLL REVEAL ───
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (i * 0.08) + 's';
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
