@@ -698,9 +698,19 @@ h1 {
 }
 
 .why-metric-icon {
-  font-size: 1.4rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
+
+.wmi-blue  { background: rgba(79,110,247,0.12); color: var(--accent-light); }
+.wmi-green { background: rgba(16,185,129,0.12); color: #10b981; }
+.wmi-cyan  { background: rgba(6,182,212,0.12);  color: var(--cyan); }
+.wmi-violet{ background: rgba(124,58,237,0.12); color: var(--violet-light); }
 
 .why-metric-num {
   font-family: 'Space Grotesk', sans-serif;
@@ -780,9 +790,15 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
   position: relative;
   overflow: hidden;
+}
+
+.portfolio-thumb-icon {
+  color: rgba(255,255,255,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .portfolio-thumb-1 {
@@ -999,14 +1015,36 @@ h1 {
 .trust-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   font-size: 0.84rem;
   color: var(--muted);
   margin: 0;
+  font-weight: 500;
 }
 
-.trust-item strong {
-  font-size: 1rem;
+.trust-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trust-icon--shield {
+  background: rgba(16,185,129,0.1);
+  color: #10b981;
+}
+
+.trust-icon--clock {
+  background: rgba(79,110,247,0.1);
+  color: var(--accent-light);
+}
+
+.trust-icon--check {
+  background: rgba(16,185,129,0.1);
+  color: #10b981;
 }
 
 .site-footer {
