@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force \"assets\\\\img\")",
+      "Bash(Out-Null)",
+      "Bash(Remove-Item -Force \"clickweb-original.html\")"
+    ]
+  }
+}

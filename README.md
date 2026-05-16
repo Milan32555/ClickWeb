@@ -1,48 +1,50 @@
-# Click Web — Sitio Profesional
+# Click Web — Sitio Web Corporativo
 
-Esta es una página de portafolio y servicios lista para publicar en GitHub Pages.
+Landing page profesional para una agencia de soluciones digitales. Construida con HTML, CSS y JavaScript puros — sin dependencias de terceros, lista para GitHub Pages.
 
 ## Estructura del proyecto
 
-- `index.html` — Página principal con contenido actualizado y accesible.
-- `assets/css/styles.css` — Estilos separados para mejor mantenimiento.
-- `assets/js/scripts.js` — Lógica de banner de cookies, menú móvil, modales y accesibilidad.
+```
+clickweb/
+├── index.html              # Página principal
+├── assets/
+│   ├── css/
+│   │   └── styles.css      # Estilos completos (tokens, layout, componentes)
+│   ├── js/
+│   │   └── scripts.js      # Cookies, menú móvil, modales, accesibilidad
+│   └── img/                # Imágenes y recursos gráficos
+└── README.md
+```
 
-## Cómo usar
+## Tecnologías
 
-1. Guarda este proyecto en un repositorio de GitHub.
-2. Asegúrate de que `index.html` está en la raíz del repositorio.
-3. Ve a **Settings > Pages** en GitHub.
-4. Selecciona la rama `main` (o `master`) y la carpeta `/` como origen.
-5. Pulsa **Save** y espera a que GitHub genere el sitio.
+- **Tipografía**: Space Grotesk (headings) + Plus Jakarta Sans (body) vía Google Fonts
+- **Sin frameworks** — CSS custom properties, Grid, Flexbox, IntersectionObserver
+- **Accesibilidad**: ARIA roles, skip link, focus trap en modales, tecla Escape
+- **SEO**: meta description, Open Graph, Twitter Card, robots
 
-El sitio quedará disponible en `https://<tu-usuario>.github.io/<tu-repositorio>`.
+## Despliegue en GitHub Pages
 
-## Personalización rápida
+1. Sube el proyecto a un repositorio de GitHub
+2. Ve a **Settings → Pages**
+3. Selecciona rama `main` y carpeta `/` como origen
+4. Guarda — el sitio quedará en `https://<usuario>.github.io/<repositorio>`
 
-- Reemplaza el número de WhatsApp y el correo electrónico en `index.html` con tus datos reales.
-- Cambia los proyectos de ejemplo en la sección de portafolio.
-- Si necesitas otro dominio, configura el archivo `CNAME` en la raíz del repositorio y añade tu dominio en GitHub Pages.
+Para dominio propio, añade un archivo `CNAME` en la raíz con tu dominio.
 
-## Buenas prácticas incluidas
+## Personalización
 
-- Estructura semántica con `header`, `main`, `section` y `footer`.
-- Navegación accesible con `aria-label`, `aria-expanded` y foco visible.
-- Banner de cookies persistente con `localStorage`.
-- Modales accesibles con `role="dialog"`, `aria-modal="true"` y cierre con Escape.
-- Enlaces externos con `target="_blank"` y `rel="noopener noreferrer"`.
-- CSS y JavaScript separados para un proyecto profesional.
+| Qué cambiar | Dónde |
+|---|---|
+| Número de WhatsApp | Busca `573001234567` en `index.html` |
+| Datos legales (NIT, dirección) | Modales `#modal-aviso` y `#modal-privacidad` |
+| Proyectos del portafolio | Sección `#portafolio` en `index.html` |
+| URL canónica y og:url | `<head>` en `index.html` |
+| Redes sociales | `href="#"` en los `<a class="social-link">` del footer |
 
 ## Pruebas locales
 
-Puedes abrir `index.html` directamente en el navegador o usar un servidor local para pruebas:
-
 ```bash
 python -m http.server 8000
+# Abre http://localhost:8000
 ```
-
-Luego visita `http://localhost:8000`.
-
-## Nota
-
-El contenido actual de Click Web se ha mantenido y organizado en una estructura profesional para que solo tengas que subirlo a GitHub y publicarlo en la nube.
