@@ -26,11 +26,13 @@ function setCookieBannerState() {
 function acceptCookies() {
   localStorage.setItem('cw_cookie_consent', 'accepted');
   setCookieBannerState();
+  if (activeModal) closeModal(activeModal.id);
 }
 
 function rejectCookies() {
   localStorage.setItem('cw_cookie_consent', 'rejected');
   setCookieBannerState();
+  if (activeModal) closeModal(activeModal.id);
 }
 
 function toggleMobileNav() {
