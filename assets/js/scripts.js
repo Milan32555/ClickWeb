@@ -7,6 +7,7 @@ const modalOverlays = document.querySelectorAll('.modal-overlay');
 const cookieButtons = document.querySelectorAll('[data-cookie-action]');
 let activeModal = null;
 let lastFocusedElement = null;
+const modalStack = []; // soporte para modales anidados
 
 function lockBodyScroll() {
   document.body.style.overflow = 'hidden';
@@ -23,16 +24,34 @@ function setCookieBannerState() {
   cookieBanner.setAttribute('aria-hidden', visible ? 'false' : 'true');
 }
 
+function closeAllModals() {
+  modalStack.forEach(item => {
+    item.modal.classList.remove('open');
+    item.modal.setAttribute('aria-hidden', 'true');
+  });
+  modalStack.length = 0;
+  if (activeModal) {
+    activeModal.classList.remove('open');
+    activeModal.setAttribute('aria-hidden', 'true');
+    activeModal = null;
+  }
+  if (!mobileNav.classList.contains('open')) unlockBodyScroll();
+  if (lastFocusedElement) {
+    lastFocusedElement.focus();
+    lastFocusedElement = null;
+  }
+}
+
 function acceptCookies() {
   localStorage.setItem('cw_cookie_consent', 'accepted');
   setCookieBannerState();
-  if (activeModal) closeModal(activeModal.id);
+  closeAllModals();
 }
 
 function rejectCookies() {
   localStorage.setItem('cw_cookie_consent', 'rejected');
   setCookieBannerState();
-  if (activeModal) closeModal(activeModal.id);
+  closeAllModals();
 }
 
 function toggleMobileNav() {
@@ -43,7 +62,7 @@ function toggleMobileNav() {
   mobileNav.setAttribute('aria-hidden', String(!opening));
   if (opening) {
     lockBodyScroll();
-    const firstLink = mobileNav.querySelector('a, button:not(.mobile-nav-close)');
+    const firstLink = mobileNav.querySelector('a:not(.mobile-nav-cta)');
     if (firstLink) firstLink.focus();
   } else {
     unlockBodyScroll();
@@ -60,11 +79,21 @@ function closeMobileNav() {
 function openModal(id) {
   const modalOverlay = document.getElementById(id);
   if (!modalOverlay) return;
-  lastFocusedElement = document.activeElement;
+
+  if (activeModal) {
+    // Modal anidado: oculta el actual y empuja al stack
+    modalStack.push({ modal: activeModal, focused: document.activeElement });
+    activeModal.classList.remove('open');
+    activeModal.setAttribute('aria-hidden', 'true');
+  } else {
+    lastFocusedElement = document.activeElement;
+    lockBodyScroll();
+  }
+
   modalOverlay.classList.add('open');
   modalOverlay.setAttribute('aria-hidden', 'false');
   activeModal = modalOverlay;
-  lockBodyScroll();
+
   const focusable = modalOverlay.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
   if (focusable.length) focusable[0].focus();
 }
@@ -74,11 +103,22 @@ function closeModal(id) {
   if (!modalOverlay) return;
   modalOverlay.classList.remove('open');
   modalOverlay.setAttribute('aria-hidden', 'true');
-  activeModal = null;
-  if (!mobileNav.classList.contains('open')) {
-    unlockBodyScroll();
+
+  if (modalStack.length > 0) {
+    // Restaura el modal anterior del stack
+    const prev = modalStack.pop();
+    activeModal = prev.modal;
+    activeModal.classList.add('open');
+    activeModal.setAttribute('aria-hidden', 'false');
+    if (prev.focused) prev.focused.focus();
+  } else {
+    activeModal = null;
+    if (!mobileNav.classList.contains('open')) unlockBodyScroll();
+    if (lastFocusedElement) {
+      lastFocusedElement.focus();
+      lastFocusedElement = null;
+    }
   }
-  if (lastFocusedElement) lastFocusedElement.focus();
 }
 
 function trapFocus(event) {
@@ -86,14 +126,14 @@ function trapFocus(event) {
   const focusable = Array.from(activeModal.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'))
     .filter(el => !el.hasAttribute('disabled'));
   if (!focusable.length) return;
-  const firstElement = focusable[0];
-  const lastElement = focusable[focusable.length - 1];
-  if (event.shiftKey && document.activeElement === firstElement) {
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
     event.preventDefault();
-    lastElement.focus();
-  } else if (!event.shiftKey && document.activeElement === lastElement) {
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
     event.preventDefault();
-    firstElement.focus();
+    first.focus();
   }
 }
 
@@ -106,15 +146,11 @@ function onDocumentKeyDown(event) {
       burgerButton.focus();
     }
   }
-  if (event.key === 'Tab') {
-    trapFocus(event);
-  }
+  if (event.key === 'Tab') trapFocus(event);
 }
 
 function onOverlayClick(event) {
-  if (event.target === event.currentTarget) {
-    closeModal(event.currentTarget.id);
-  }
+  if (event.target === event.currentTarget) closeModal(event.currentTarget.id);
 }
 
 function init() {
@@ -122,29 +158,23 @@ function init() {
 
   cookieButtons.forEach(button => {
     button.addEventListener('click', () => {
-      if (button.dataset.cookieAction === 'accept') {
-        acceptCookies();
-      } else {
-        rejectCookies();
-      }
+      if (button.dataset.cookieAction === 'accept') acceptCookies();
+      else rejectCookies();
     });
   });
 
   burgerButton.addEventListener('click', toggleMobileNav);
 
   const mobileNavClose = document.getElementById('mobileNavClose');
-  if (mobileNavClose) {
-    mobileNavClose.addEventListener('click', closeMobileNav);
-  }
+  if (mobileNavClose) mobileNavClose.addEventListener('click', closeMobileNav);
 
   mobileNav.addEventListener('click', event => {
     if (event.target === mobileNav) closeMobileNav();
   });
 
+  // Cierra el nav al hacer clic en cualquier enlace (incluyendo .mobile-nav-cta)
   document.querySelectorAll('#mobileNav a').forEach(link => {
-    link.addEventListener('click', () => {
-      closeMobileNav();
-    });
+    link.addEventListener('click', () => closeMobileNav());
   });
 
   openModalButtons.forEach(button => {
@@ -155,9 +185,7 @@ function init() {
     button.addEventListener('click', () => closeModal(button.dataset.closeModal));
   });
 
-  modalOverlays.forEach(overlay => {
-    overlay.addEventListener('click', onOverlayClick);
-  });
+  modalOverlays.forEach(overlay => overlay.addEventListener('click', onOverlayClick));
 
   document.addEventListener('keydown', onDocumentKeyDown);
 
@@ -166,10 +194,12 @@ function init() {
     let i = 0;
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.transitionDelay = `${i * 0.1}s`;
-        entry.target.classList.add('visible');
+        const el = entry.target;
+        el.style.transitionDelay = `${i * 0.1}s`;
+        el.classList.add('visible');
+        el.addEventListener('transitionend', () => { el.style.transitionDelay = ''; }, { once: true });
         i++;
-        observerInstance.unobserve(entry.target);
+        observerInstance.unobserve(el);
       }
     });
   }, { threshold: 0.1 });
