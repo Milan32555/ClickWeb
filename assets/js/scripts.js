@@ -8,6 +8,14 @@ const cookieButtons = document.querySelectorAll('[data-cookie-action]');
 let activeModal = null;
 let lastFocusedElement = null;
 
+function lockBodyScroll() {
+  document.body.style.overflow = 'hidden';
+}
+
+function unlockBodyScroll() {
+  document.body.style.overflow = '';
+}
+
 function setCookieBannerState() {
   const consent = localStorage.getItem('cw_cookie_consent');
   const visible = consent === null;
@@ -27,15 +35,24 @@ function rejectCookies() {
 
 function toggleMobileNav() {
   const expanded = burgerButton.getAttribute('aria-expanded') === 'true';
-  burgerButton.setAttribute('aria-expanded', String(!expanded));
-  mobileNav.classList.toggle('open');
-  mobileNav.setAttribute('aria-hidden', String(expanded));
+  const opening = !expanded;
+  burgerButton.setAttribute('aria-expanded', String(opening));
+  mobileNav.classList.toggle('open', opening);
+  mobileNav.setAttribute('aria-hidden', String(!opening));
+  if (opening) {
+    lockBodyScroll();
+    const firstLink = mobileNav.querySelector('a, button:not(.mobile-nav-close)');
+    if (firstLink) firstLink.focus();
+  } else {
+    unlockBodyScroll();
+  }
 }
 
 function closeMobileNav() {
   burgerButton.setAttribute('aria-expanded', 'false');
   mobileNav.classList.remove('open');
   mobileNav.setAttribute('aria-hidden', 'true');
+  unlockBodyScroll();
 }
 
 function openModal(id) {
@@ -45,10 +62,9 @@ function openModal(id) {
   modalOverlay.classList.add('open');
   modalOverlay.setAttribute('aria-hidden', 'false');
   activeModal = modalOverlay;
+  lockBodyScroll();
   const focusable = modalOverlay.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
-  if (focusable.length) {
-    focusable[0].focus();
-  }
+  if (focusable.length) focusable[0].focus();
 }
 
 function closeModal(id) {
@@ -57,9 +73,10 @@ function closeModal(id) {
   modalOverlay.classList.remove('open');
   modalOverlay.setAttribute('aria-hidden', 'true');
   activeModal = null;
-  if (lastFocusedElement) {
-    lastFocusedElement.focus();
+  if (!mobileNav.classList.contains('open')) {
+    unlockBodyScroll();
   }
+  if (lastFocusedElement) lastFocusedElement.focus();
 }
 
 function trapFocus(event) {
@@ -113,8 +130,19 @@ function init() {
 
   burgerButton.addEventListener('click', toggleMobileNav);
 
+  const mobileNavClose = document.getElementById('mobileNavClose');
+  if (mobileNavClose) {
+    mobileNavClose.addEventListener('click', closeMobileNav);
+  }
+
+  mobileNav.addEventListener('click', event => {
+    if (event.target === mobileNav) closeMobileNav();
+  });
+
   document.querySelectorAll('#mobileNav a').forEach(link => {
-    link.addEventListener('click', closeMobileNav);
+    link.addEventListener('click', () => {
+      closeMobileNav();
+    });
   });
 
   openModalButtons.forEach(button => {
@@ -133,14 +161,16 @@ function init() {
 
   const revealElements = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries, observerInstance) => {
-    entries.forEach((entry, index) => {
+    let i = 0;
+    entries.forEach(entry => {
       if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = `${i * 0.1}s`;
         entry.target.classList.add('visible');
-        entry.target.style.transitionDelay = `${index * 0.08}s`;
+        i++;
         observerInstance.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
 
   revealElements.forEach(el => observer.observe(el));
 }
