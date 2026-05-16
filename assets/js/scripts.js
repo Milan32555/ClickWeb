@@ -79,8 +79,13 @@ function trapFocus(event) {
 }
 
 function onDocumentKeyDown(event) {
-  if (event.key === 'Escape' && activeModal) {
-    closeModal(activeModal.id);
+  if (event.key === 'Escape') {
+    if (activeModal) {
+      closeModal(activeModal.id);
+    } else if (mobileNav.classList.contains('open')) {
+      closeMobileNav();
+      burgerButton.focus();
+    }
   }
   if (event.key === 'Tab') {
     trapFocus(event);
